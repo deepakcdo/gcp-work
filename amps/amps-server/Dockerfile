@@ -11,6 +11,7 @@ RUN tar xvf /binaries/AMPS.tar
 ENV OLD_DIR=AMPS-${VERSION}-Release-Linux
 RUN mv $OLD_DIR AMPS
 RUN ls -l /
+RUN sudo apt install tree
 RUN tree
 
 # expose All  tcp ports
