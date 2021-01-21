@@ -1,0 +1,14 @@
+Install Minikube
+
+Source : https://minikube.sigs.k8s.io/docs/start/
+
+Command
+brew install minikube
+brew upgrade hyperkit
+minikube start
+minikube pause
+minikube stop
+
+minikube dashboard &
+kubectl version
+

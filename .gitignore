@@ -1,6 +1,6 @@
 .gradle/
 /build/
-/examples/
+kubernets_examples/examples/
 /.idea/
 *.iml
 *.store

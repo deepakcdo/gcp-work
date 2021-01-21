@@ -1,0 +1,21 @@
+sudo groupadd docker
+sudo systemctl start docker
+sudo docker info
+docker info
+grep docker /etc/group
+sudo groupadd docker
+sudo gpasswd -a $USER docker
+newgrp docker
+newgrp docker
+
+docker run --name web-server -d -p 8080:80 nginx:1.12
+curl localhost:8080
+docker stop web-server
+docker start web-server
+docker logs web-server
+docker exec -it web-server /bin/bash
+
+
+// replace Ip
+EXTIP=`curl -s ifconfig.co`
+sed -i -e "s/X.X.X.X.nip.io/$EXTIP.nip.io/g" deploy-api-ingress.yaml

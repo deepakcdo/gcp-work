@@ -1,0 +1,85 @@
+cd  /Users/deepakcdo/Documents/MySpace/Dev/kubernetes-operator-book/ch03
+
+// watch pods
+kubectl get pods -w
+
+// create CRD
+kubectl create -f etcd-operator-crd.yaml
+kubectl get crd
+
+//create serviveaccoutn
+kubectl create  -f etcd-operator-sa.yaml
+kubectl get sa
+
+// create role
+kubectl create  -f etcd-operator-role.yaml
+kubectl get Role
+
+// create role
+kubectl create  -f etcd-operator-rolebinding.yaml
+kubectl get rolebinding
+
+//create operator bindings
+kubectl create  -f etcd-operator-deployment.yaml
+kubectl get deployments
+
+//create etd cluster
+kubectl create  -f etcd-cluster-cr.yaml
+kubectl get pods
+
+//check spec and status
+kubectl describe etcdcluster/example-etcd-cluster
+
+//check etcd service
+kubectl get services --selector etcd_cluster=example-etcd-cluster
+
+// runt test terminals
+kubectl run --rm -i --tty etcdctl --image quay.io/coreos/etcd --restart=Never -- /bin/sh
+export ETCDCTL_API=3
+export ETCDSVC=http://example-etcd-cluster-client:2379
+etcdctl --endpoints $ETCDSVC get foo
+etcdctl --endpoints $ETCDSVC put foo bar
+etcdctl --endpoints $ETCDSVC get foo
+etcdctl --endpoints $ETCDSVC get new
+etcdctl --endpoints http://example-etcd-cluster-tbvzdfshns.example-etcd-cluster.default.svc:2379 get foo
+etcdctl --endpoints http://example-etcd-cluster-zr9twzgzlq.example-etcd-cluster.default.svc:2379 get foo
+// check health
+etcdctl --endpoints $ETCDSVC cluster-health
+etcdctl --endpoints $ETCDSVC endpoint health
+etcdctl --endpoints $ETCDSVC endpoint status
+etcdctl --endpoints $ETCDSVC member list
+
+
+//scale up
+change ch03/etcd-cluster-cr.yaml ( size field)
+kubectl apply  -f etcd-cluster-cr.yaml
+//verify
+kubectl get pods
+
+// kill a pod
+kubectl delete pod example-etcd-cluster-2vv78bn99f
+
+
+// upgrade etcd
+kubectl get pod example-etcd-cluster-qhbck8hlfs
+kubectl get pod example-etcd-cluster-qhbck8hlfs -o yaml | grep 'image:' |uniq
+
+change ch03/etcd-cluster-cr.yaml ( size field)
+kubectl apply  -f etcd-cluster-cr.yaml
+
+//upgrade manually
+kubectl patch etcdcluster example-etcd-cluster --type=json \
+-p '[{"op":"replace", "path": "/spec/version","value": 3.3.12}]'
+
+kubectl patch etcdcluster example-etcd-cluster --type=json \
+-p '[{"op":"replace", "path": "/spec/size","value": 1}]'
+
+
+//delete all
+kubectl delete  -f etcd-operator-sa.yaml
+kubectl delete  -f etcd-operator-role.yaml
+kubectl delete  -f etcd-operator-rolebinding.yaml
+kubectl delete  -f etcd-operator-crd.yaml
+kubectl delete  -f etcd-operator-deployment.yaml
+kubectl delete  -f etcd-cluster-cr.yaml
+

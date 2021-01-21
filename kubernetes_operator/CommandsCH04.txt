@@ -1,0 +1,10 @@
+cd  /Users/deepakcdo/Documents/MySpace/Dev/kubernetes-operator-book/ch03
+Install go and git
+
+go get -d github.com/operator-framework/operator-sdk
+
+cd /Users/deepakcdo/go/src/github.com/operator-framework/operator-sdk
+git checkout master
+make tidy
+make install
+operator-sdk version
