@@ -4,7 +4,7 @@ steps:
   args: ["-c", "echo ${_MAJOR}.${_MINOR}.${_PATCH}.$(cat simple-web/version.txt) > IMAGE_TAG"]
 - name: gcr.io/cloud-builders/docker
   entrypoint: /bin/bash
-  args: ["-c", "docker build -f Dockerfile -t eu.gcr.io/$PROJECT_ID/simple-web:$(cat IMAGE_TAG) -t eu.gcr.io/$PROJECT_ID/simple-web:latest --cache-from eu.gcr.io/$PROJECT_ID/simple-web:latest simple-web/" ]
+  args: ["-c", "docker build -f simple-web/Dockerfile -t eu.gcr.io/$PROJECT_ID/simple-web:$(cat IMAGE_TAG) -t eu.gcr.io/$PROJECT_ID/simple-web:latest --cache-from eu.gcr.io/$PROJECT_ID/simple-web:latest ." ]
 - name: gcr.io/cloud-builders/docker
   entrypoint: /bin/bash
   args: ["-c", "docker push eu.gcr.io/$PROJECT_ID/simple-web:$(cat IMAGE_TAG)"]
