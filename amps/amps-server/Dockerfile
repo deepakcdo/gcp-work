@@ -1,4 +1,4 @@
-FROM alpine
+FROM ubuntu
 
 ARG VERSION=5.3.1.31
 
