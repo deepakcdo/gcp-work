@@ -7,7 +7,10 @@ gcloud beta container --project "deepak-cloud-work" clusters create "my-k8-new" 
 
 gcloud container clusters get-credentials my-k8-new --zone "europe-north1-a"
 kubectl get namespace
- kubectl apply -f Namespace.yml
+
+/mnt/c/MySpace/Dev/Git/Cloud/gcp-work/amps/amps-server/manifest
+dos2unix configmap/*
+kubectl apply -f Namespace.yml
  
  export PROJECT_ID="$(gcloud config get-value project -q)"
 # set namespace

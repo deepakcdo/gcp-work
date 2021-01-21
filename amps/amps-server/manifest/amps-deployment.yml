@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: amps-servers
-        image: gcr.io/deepak-cloud-work/github.com/deepakcdo/jetfuelconfig:0b715528da77af49ad245d3009c29a951dcef0c2
+        image: eu.gcr.io/deepak-cloud-work/amps-server:1.0.0.02
         env:
           - name: AMPS_NAME
             value: "LDN-PRIMARY"
