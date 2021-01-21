@@ -1,7 +1,7 @@
 steps:
 - name: gcr.io/cloud-builders/git
   entrypoint: /bin/bash
-  args: ["-c", "echo ${_MAJOR}.${_MINOR}.${_PATCH}.$(cat amps-server/version.txt) > IMAGE_TAG"]
+  args: ["-c", "echo ${_MAJOR}.${_MINOR}.${_PATCH}.$(cat amps/amps-server/version.txt) > IMAGE_TAG"]
 - name: gcr.io/cloud-builders/docker
   entrypoint: /bin/bash
   args: ["-c", "docker build -f amps/amps-server/Dockerfile -t eu.gcr.io/$PROJECT_ID/amps-server:$(cat IMAGE_TAG) -t eu.gcr.io/$PROJECT_ID/amps-server:latest --cache-from eu.gcr.io/$PROJECT_ID/amps-server:latest amps/amps-server/" ]
