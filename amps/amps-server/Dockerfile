@@ -8,7 +8,8 @@ ADD http://devnull.crankuptheamps.com/releases/amps/$VERSION/AMPS-$VERSION-Relea
 RUN ls -l /
 RUN ls -l /binaries
 RUN tar xvf /binaries/AMPS.tar
-RUN mv AMPS-${VERSION}-Release-Linux AMPS
+ENV OLD_DIR= AMPS-${VERSION}-Release-Linux
+RUN mv $OLD_DIR AMPS
 RUN ls -l /
 
 # expose All  tcp ports
