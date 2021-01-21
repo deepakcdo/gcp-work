@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: amps
+  namespace: amps-namespace
+  labels:
+    name: amps
+spec:
+  serviceName: amps-servers
+  replicas: 1
+  selector:
+    matchLabels:
+      name: amps-servers
+  template:
+    metadata:
+      labels:
+        name: amps-servers
+    spec:
+      containers:
+      - name: amps-servers
+        image: gcr.io/deepak-cloud-work/github.com/deepakcdo/jetfuelconfig:0b715528da77af49ad245d3009c29a951dcef0c2
+        env:
+          - name: AMPS_NAME
+            value: "LDN-PRIMARY"
+          - name: REP_SERVER
+            value: "backup-amps"
+        imagePullPolicy: Always
+        command:
+        - /bin/sh
+        - -c
+        args:
+        - /AMPS/bin/ampServer /etc/app/conf/amps-config.xml
+        volumeMounts:
+        - name: amps-vol
+          mountPath: /ampsFiles
+        - name: conf-vol
+          mountPath: /etc/app/conf
+      initContainers:
+      - name: init-set
+        image: alpine:latest
+        command:
+        - /mnt/scripts/run.sh
+        volumeMounts:
+        - name: scripts-vol
+          mountPath: /mnt/scripts
+        - name: conf-vol
+          mountPath: /mnt/data
+      volumes:
+      - name: scripts-vol
+        configMap:
+          name: my-set-config
+          defaultMode: 0555
+      - name: amps-vol
+        emptyDir: { }
+      - name: conf-vol
+        emptyDir: { }

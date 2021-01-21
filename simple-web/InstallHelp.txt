@@ -8,3 +8,5 @@ cd to right fodler
 
 kubectl apply -f helloweb-deployment.yaml
 kubectl apply -f helloweb-service-load-balancer.yaml
+
+kubectl get services

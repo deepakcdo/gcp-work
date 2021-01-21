@@ -1,0 +1,555 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AMPSConfig>
+    <Name>${AMPS_NAME}</Name>
+    <Group>LONDON</Group>
+    <Admin>
+        <InetAddr>localhost:8198</InetAddr>
+        <FileName>ampsFiles/${AMPS_NAME}/stats.db</FileName>
+        <SQLTransport>websocket-any</SQLTransport>
+    </Admin>
+    <SOWStatsInterval>5s</SOWStatsInterval>
+    <RequiredMinimumVersion>5.0</RequiredMinimumVersion>
+
+    <Transports>
+        <Transport>
+            <Name>tcp-json</Name>
+            <Type>tcp</Type>
+            <InetAddr>9001</InetAddr>
+            <ReuseAddr>true</ReuseAddr>
+            <MessageType>json</MessageType>
+            <Protocol>amps</Protocol>
+        </Transport>
+        <Transport>
+            <Name>nvfix-tcp</Name>
+            <Type>tcp</Type>
+            <InetAddr>9002</InetAddr>
+            <ReuseAddr>true</ReuseAddr>
+            <MessageType>nvfix</MessageType>
+            <Protocol>amps</Protocol>
+        </Transport>
+        <Transport>
+            <Name>amps-replication</Name>
+            <Type>amps-replication</Type>
+            <InetAddr>19085</InetAddr>
+            <ReuseAddr>true</ReuseAddr>
+        </Transport>
+        <Transport>
+            <Name>websocket-any</Name>
+            <Protocol>websocket</Protocol>
+            <Type>tcp</Type>
+            <InetAddr>9008</InetAddr>
+        </Transport>
+    </Transports>
+
+    <Logging>
+        <Target>
+            <Protocol>file</Protocol>
+            <FileName>ampsFiles/${AMPS_NAME}/logs/${AMPS_NAME}-%Y%m%d-%H%M%S-%n.log</FileName>
+            <RotationThreshold>200MB</RotationThreshold>
+            <Level>info</Level>
+        </Target>
+    </Logging>
+
+    <SOW>
+
+        <Topic>
+            <FileName>ampsFiles/${AMPS_NAME}/sow/%n-json.sow</FileName>
+            <Topic>JETFUEL_EXECUTE</Topic>
+            <Key>/ID</Key>
+            <MessageType>json</MessageType>
+            <Expiration>600m</Expiration>
+            <Enrichment>
+                <Field>'${AMPS_NAME}' as /AmpsInstanceOwner</Field>
+            </Enrichment>
+        </Topic>
+
+        <Topic>
+            <FileName>ampsFiles/${AMPS_NAME}/sow/%n-json.sow</FileName>
+            <Topic>JETFUEL_EXECUTE_BUS</Topic>
+            <Key>/ID</Key>
+            <MessageType>json</MessageType>
+            <Expiration>25h</Expiration>
+            <Enrichment>
+                <Field>IF(/AmpsInstanceOwner OF PREVIOUS IS NULL, IF(/CurrentState OF CURRENT == 'RequestNew',
+                    '${AMPS_NAME}', /AmpsInstanceOwner OF CURRENT), /AmpsInstanceOwner OF PREVIOUS) as /AmpsInstanceOwner
+                </Field>
+            </Enrichment>
+        </Topic>
+
+        <Topic>
+            <FileName>ampsFiles/${AMPS_NAME}/sow/%n-json.sow</FileName>
+            <Topic>JETFUEL_EXECUTE_STATS</Topic>
+            <MessageType>json</MessageType>
+            <Expiration>365d</Expiration>
+            <Preprocessing>
+                <Field>REGEXP_REPLACE(/MsgCreationTime,"T.*","") as /Date</Field>
+            </Preprocessing>
+            <Enrichment>
+                <Field>IF(/CurrentState OF CURRENT == 'RequestNew',IF(/RequestNewCount OF PREVIOUS IS NULL, 1,
+                    (/RequestNewCount OF PREVIOUS) + 1), /RequestNewCount OF PREVIOUS) as /RequestNewCount
+                </Field>
+                <Field>IF(/CurrentState OF CURRENT == 'Completed',IF(/CompletedCount OF PREVIOUS IS NULL, 1,
+                    (/CompletedCount OF PREVIOUS) + 1), /CompletedCount OF PREVIOUS) as /CompletedCount
+                </Field>
+                <Field>IF(/CurrentState OF CURRENT == 'Error', IF(/ErrorCount OF PREVIOUS IS NULL, 1, (/ErrorCount OF
+                    PREVIOUS) + 1), /ErrorCount OF PREVIOUS) as /ErrorCount
+                </Field>
+                <Field>IF(/CurrentState OF CURRENT == 'Timeout', IF(/TimeoutCount OF PREVIOUS IS NULL, 1, (/TimeoutCount
+                    OF PREVIOUS) + 1), /TimeoutCount OF PREVIOUS) as /TimeoutCount
+                </Field>
+                <Field>IF(/CurrentState OF CURRENT == 'RequestCancelSub', IF(/RequestCancelSubCount OF PREVIOUS IS NULL,
+                    1, (/RequestCancelSubCount OF PREVIOUS) + 1), /RequestCancelSubCount OF PREVIOUS) as
+                    /RequestCancelSubCount
+                </Field>
+                <Field>IF(/CurrentState OF CURRENT == 'SubCancelled', IF(/SubCancelledCount OF PREVIOUS IS NULL, 1,
+                    (/SubCancelledCount OF PREVIOUS) + 1), /SubCancelledCount OF PREVIOUS) as /SubCancelledCount
+                </Field>
+                <Field>IF(/CurrentState OF CURRENT == 'SubUpdate', IF(/SubUpdateCount OF PREVIOUS IS NULL, 1,
+                    (/SubUpdateCount OF PREVIOUS) + 1), /SubUpdateCount OF PREVIOUS) as /SubUpdateCount
+                </Field>
+                <Field>IF(/CurrentState OF CURRENT == 'SubActive', IF(/SubActiveCount OF PREVIOUS IS NULL, 1,
+                    (/SubActiveCount OF PREVIOUS) + 1), /SubActiveCount OF PREVIOUS) as /SubActiveCount
+                </Field>
+                <Field>IF(/MsgCreationTime == 1, NULL, NULL) AS /MsgCreationTime HINT OPTIONAL</Field>
+                <Field>IF(/MsgCreationName == 1, NULL, NULL) AS /MsgCreationName HINT OPTIONAL</Field>
+                <Field>IF(/FunctionCallerHostName == 1, NULL, NULL) AS /FunctionCallerHostName HINT OPTIONAL</Field>
+                <Field>IF(/CurrentState == 1, NULL, NULL) AS /CurrentState HINT OPTIONAL</Field>
+                <Field>IF(/ID == 1, NULL, NULL) AS /ID HINT OPTIONAL</Field>
+                <Field>IF(/FunctionInitiatorName == 1, NULL, NULL) AS /FunctionInitiatorName HINT OPTIONAL</Field>
+                <Field>IF(/FunctionParameters == 1, NULL, NULL) AS /FunctionParameters HINT OPTIONAL</Field>
+                <Field>IF(/AmpsInstanceOwner == 1, NULL, NULL) AS /AmpsInstanceOwner HINT OPTIONAL</Field>
+                <Field>IF(/CurrentStateMsg == 1, NULL, NULL) AS /CurrentStateMsg HINT OPTIONAL</Field>
+                <Field>IF(/ReturnValue == 1, NULL, NULL) AS /ReturnValue HINT OPTIONAL</Field>
+                <Field>IF(/FunctionUpdateMsg == 1, NULL, NULL) AS /FunctionUpdateMsg HINT OPTIONAL</Field>
+                <Field>IF(/ExceptionMessage == 1, NULL, NULL) AS /ExceptionMessage HINT OPTIONAL</Field>
+            </Enrichment>
+            <Key>/Date</Key>
+            <Key>/FunctionToCall</Key>
+        </Topic>
+
+        <Topic>
+            <FileName>ampsFiles/${AMPS_NAME}/sow/%n-json.sow</FileName>
+            <Topic>TEST_PRICE</Topic>
+            <Key>/ID</Key>
+            <MessageType>json</MessageType>
+            <Expiration>400d</Expiration>
+        </Topic>
+
+        <Topic>
+            <FileName>ampsFiles/${AMPS_NAME}/sow/%n-json.sow</FileName>
+            <Topic>HISTORIC_TRADES</Topic>
+            <Key>/ID</Key>
+            <MessageType>json</MessageType>
+            <Expiration>400d</Expiration>
+        </Topic>
+
+        <Topic>
+            <FileName>ampsFiles/${AMPS_NAME}/sow/%n-json.sow</FileName>
+            <Topic>TEST_INSTRUMENTS</Topic>
+            <Key>/ID</Key>
+            <MessageType>json</MessageType>
+            <Expiration>400d</Expiration>
+        </Topic>
+
+        <Topic>
+            <FileName>ampsFiles/${AMPS_NAME}/sow/%n-json.sow</FileName>
+            <Topic>TEST_ORDERS</Topic>
+            <Key>/ID</Key>
+            <MessageType>json</MessageType>
+            <Expiration>400d</Expiration>
+        </Topic>
+
+        <Topic>
+            <FileName>ampsFiles/${AMPS_NAME}/sow/%n-json.sow</FileName>
+            <Topic>/BBG/ORDERS</Topic>
+            <Key>/ID</Key>
+            <MessageType>json</MessageType>
+            <Expiration>400d</Expiration>
+        </Topic>
+
+        <Topic>
+            <FileName>ampsFiles/${AMPS_NAME}/sow/%n-json.sow</FileName>
+            <Topic>/BBG/TRADES</Topic>
+            <Key>/ID</Key>
+            <MessageType>json</MessageType>
+            <Expiration>400d</Expiration>
+        </Topic>
+
+        <Topic>
+            <FileName>ampsFiles/${AMPS_NAME}/sow/%n-json.sow</FileName>
+            <Topic>/BBG/RFQ</Topic>
+            <Key>/ID</Key>
+            <MessageType>json</MessageType>
+            <Expiration>400d</Expiration>
+        </Topic>
+
+        <Topic>
+            <FileName>ampsFiles/${AMPS_NAME}/sow/%n-json.sow</FileName>
+            <Topic>/BBG/INSTRUMENT</Topic>
+            <Key>/ID</Key>
+            <MessageType>json</MessageType>
+            <Expiration>400d</Expiration>
+        </Topic>
+
+        <Topic>
+            <FileName>ampsFiles/${AMPS_NAME}/sow/%n-json.sow</FileName>
+            <Topic>/BBG/STATUS</Topic>
+            <Key>/ID</Key>
+            <MessageType>json</MessageType>
+            <Expiration>400d</Expiration>
+        </Topic>
+
+        <Topic>
+            <FileName>ampsFiles/${AMPS_NAME}/sow/%n-json.sow</FileName>
+            <Topic>/BBG/QUOTES</Topic>
+            <Key>/ID</Key>
+            <MessageType>json</MessageType>
+            <Expiration>400d</Expiration>
+        </Topic>
+        <Topic>
+            <FileName>ampsFiles/${AMPS_NAME}/sow/%n-json.sow</FileName>
+            <Topic>/TRADEWEB/ORDERS</Topic>
+            <Key>/ID</Key>
+            <MessageType>json</MessageType>
+            <Expiration>400d</Expiration>
+        </Topic>
+
+        <Topic>
+            <FileName>ampsFiles/${AMPS_NAME}/sow/%n-json.sow</FileName>
+            <Topic>/TRADEWEB/TRADES</Topic>
+            <Key>/ID</Key>
+            <MessageType>json</MessageType>
+            <Expiration>400d</Expiration>
+        </Topic>
+
+        <Topic>
+            <FileName>ampsFiles/${AMPS_NAME}/sow/%n-json.sow</FileName>
+            <Topic>/TRADEWEB/RFQ</Topic>
+            <Key>/ID</Key>
+            <MessageType>json</MessageType>
+            <Expiration>400d</Expiration>
+        </Topic>
+
+        <Topic>
+            <FileName>ampsFiles/${AMPS_NAME}/sow/%n-json.sow</FileName>
+            <Topic>/TRADEWEB/INSTRUMENT</Topic>
+            <Key>/ID</Key>
+            <MessageType>json</MessageType>
+            <Expiration>400d</Expiration>
+        </Topic>
+
+        <Topic>
+            <FileName>ampsFiles/${AMPS_NAME}/sow/%n-json.sow</FileName>
+            <Topic>/TRADEWEB/STATUS</Topic>
+            <Key>/ID</Key>
+            <MessageType>json</MessageType>
+            <Expiration>400d</Expiration>
+        </Topic>
+
+        <Topic>
+            <FileName>ampsFiles/${AMPS_NAME}/sow/%n-json.sow</FileName>
+            <Topic>/TRADEWEB/QUOTES</Topic>
+            <Key>/ID</Key>
+            <MessageType>json</MessageType>
+            <Expiration>400d</Expiration>
+        </Topic>
+        <Topic>
+            <FileName>ampsFiles/${AMPS_NAME}/sow/%n-json.sow</FileName>
+            <Topic>EXCHANGE_PRICE_1</Topic>
+            <Key>/EXN_ID</Key>
+            <MessageType>json</MessageType>
+            <Expiration>400d</Expiration>
+        </Topic>
+
+        <Topic>
+            <FileName>ampsFiles/${AMPS_NAME}/sow/%n-json.sow</FileName>
+            <Topic>EXCHANGE_PRICE_2</Topic>
+            <Key>/EXN_ID</Key>
+            <Key>/EXN_NAME</Key>
+            <MessageType>json</MessageType>
+            <Expiration>400d</Expiration>
+        </Topic>
+
+        <Topic>
+            <FileName>ampsFiles/${AMPS_NAME}/sow/%n-json.sow</FileName>
+            <Topic>EXCHANGE_PRICE_3</Topic>
+            <Key>/EXN_ID</Key>
+            <Key>/EXN_NAME</Key>
+            <Key>/State</Key>
+            <MessageType>json</MessageType>
+            <Expiration>400d</Expiration>
+        </Topic>
+
+        <Topic>
+            <FileName>ampsFiles/${AMPS_NAME}/sow/%n-json.sow</FileName>
+            <Topic>FAST_PRICE</Topic>
+            <Key>/ID</Key>
+            <MessageType>json</MessageType>
+            <Expiration>400d</Expiration>
+        </Topic>
+
+        <ConflatedTopic>
+            <Topic>FAST_PRICE_CONFLATED</Topic>
+            <MessageType>json</MessageType>
+            <UnderlyingTopic>FAST_PRICE</UnderlyingTopic>
+            <Interval>5s</Interval>
+            <Filter>/region = 'A'</Filter>
+        </ConflatedTopic>
+
+        <ConflatedTopic>
+            <Topic>EXCHANGE_PRICE_3_CONFLATED</Topic>
+            <MessageType>json</MessageType>
+            <UnderlyingTopic>EXCHANGE_PRICE_3</UnderlyingTopic>
+            <Interval>5s</Interval>
+        </ConflatedTopic>
+
+        <Topic>
+            <FileName>ampsFiles/${AMPS_NAME}/sow/%n-json.sow</FileName>
+            <Topic>ORDERS_TOPIC</Topic>
+            <Key>/ID</Key>
+            <MessageType>json</MessageType>
+            <Expiration>400d</Expiration>
+        </Topic>
+
+        <Topic>
+            <FileName>ampsFiles/${AMPS_NAME}/sow/%n-json.sow</FileName>
+            <Topic>COMPANIES_TOPIC</Topic>
+            <Key>/ID</Key>
+            <MessageType>json</MessageType>
+            <Expiration>400d</Expiration>
+        </Topic>
+
+        <Topic>
+            <FileName>ampsFiles/${AMPS_NAME}/sow/%n-json.sow</FileName>
+            <Topic>CLIENT_STATUS</Topic>
+            <MessageType>json</MessageType>
+            <Key>/ClientStatus/client_name</Key>
+            <Key>/ClientStatus/timestamp</Key>
+            <Key>/ClientStatus/connection_name</Key>
+            <Expiration>5h</Expiration>
+        </Topic>
+
+        <View>
+            <Name>TOTAL_COMPANY_VOLUME_VIEW</Name>
+            <UnderlyingTopic>
+                <Join>[ORDERS_TOPIC]./Tick = [COMPANIES_TOPIC]./Tick</Join>
+            </UnderlyingTopic>
+            <FileName>ampsFiles/${AMPS_NAME}/view/%n-json.sow</FileName>
+            <MessageType>json</MessageType>
+            <Projection>
+                <Field>[COMPANIES_TOPIC]./CompanyId</Field>
+                <Field>[COMPANIES_TOPIC]./Tick</Field>
+                <Field>[COMPANIES_TOPIC]./Name</Field>
+                <Field>SUM([ORDERS_TOPIC]./Shares) AS /TotalVolume</Field>
+            </Projection>
+            <Grouping>
+                <Field>[ORDERS_TOPIC]./Tick</Field>
+                <Field>[COMPANIES_TOPIC]./Name</Field>
+            </Grouping>
+        </View>
+
+        <View>
+            <Name>TOTAL_COMPANY_VOLUME_NAME_VIEW</Name>
+            <UnderlyingTopic>
+                <Join>[ORDERS_TOPIC]./Tick = [COMPANIES_TOPIC]./Tick</Join>
+            </UnderlyingTopic>
+            <FileName>ampsFiles/${AMPS_NAME}/view/%n-json.sow</FileName>
+            <MessageType>json</MessageType>
+            <Projection>
+                <Field>[COMPANIES_TOPIC]./CompanyId</Field>
+                <Field>[COMPANIES_TOPIC]./Tick</Field>
+                <Field>[COMPANIES_TOPIC]./Name</Field>
+                <Field>SUM([ORDERS_TOPIC]./Shares) AS /TotalVolume</Field>
+            </Projection>
+            <Grouping>
+                <Field>[ORDERS_TOPIC]./Tick</Field>
+            </Grouping>
+        </View>
+
+        <Queue>
+            <Name>COMMAND_QUEUE</Name>
+            <MessageType>json</MessageType>
+            <LeasePeriod>60s</LeasePeriod>
+            <Expiration>1d</Expiration>
+            <MaxBacklog>3</MaxBacklog>
+        </Queue>
+
+    </SOW>
+
+    <TransactionLog>
+        <JournalDirectory>ampsFiles/${AMPS_NAME}/journal</JournalDirectory>
+        <PreallocatedJournalFiles>1</PreallocatedJournalFiles>
+        <MinJournalSize>10MB</MinJournalSize>
+        <O_DIRECT>disabled</O_DIRECT>
+        <Topic>
+            <Name>.*</Name>
+            <MessageType>json</MessageType>
+        </Topic>
+        <FlushInterval>100ms</FlushInterval>
+    </TransactionLog>
+
+    <Replication>
+        <Destination>
+            <Topic>
+                <MessageType>json</MessageType>
+                <Name>.*</Name>
+                <ExcludeValidation>queue_passthrough</ExcludeValidation>
+            </Topic>
+            <Name>LDN-PRIMARY</Name>
+            <Group>LONDON</Group>
+            <SyncType>async</SyncType>
+            <Transport>
+                <InetAddr>${REP_SERVER}:18085</InetAddr>
+                <Type>amps-replication</Type>
+            </Transport>
+        </Destination>
+    </Replication>
+
+    <Actions>
+        <Action>
+            <On>
+                <Module>amps-action-on-schedule</Module>
+                <Options>
+                    <Every>100m</Every>
+                    <Name>Clear up</Name>
+                </Options>
+            </On>
+            <Do>
+                <Module>amps-action-do-remove-journal</Module>
+                <Options>
+                    <Age>100m</Age>
+                </Options>
+            </Do>
+        </Action>
+        <Action>
+            <On>
+                <Module>amps-action-on-disconnect-client</Module>
+            </On>
+            <Do>
+                <Module>amps-action-do-delete-sow</Module>
+                <Options>
+                    <Topic>JETFUEL_EXECUTE</Topic>
+                    <Filter>/FunctionPublisherName = "{{AMPS_CLIENT_NAME}}"</Filter>
+                    <MessageType>json</MessageType>
+                </Options>
+            </Do>
+        </Action>
+        <Action>
+            <On>
+                <Module>amps-action-on-alert</Module>
+                <Options>
+                    <MessageType>json</MessageType>
+                    <Topic>JETFUEL_EXECUTE_BUS</Topic>
+                    <Filter>/CurrentState = 'RequestNew' and /AmpsInstanceOwner = '${AMPS_NAME}'</Filter>
+                    <Duration>5s</Duration>
+                    <EventVariable>AMPS_ACTION_EVENT</EventVariable>
+                    <OOFEvent>ALERT_CLEARED</OOFEvent>
+                    <TimeoutEvent>ALERT_TIMEOUT</TimeoutEvent>
+                </Options>
+            </On>
+            <Do>
+                <Module>amps-action-do-execute-event</Module>
+                <Options>
+                    <EventVariable>AMPS_ACTION_EVENT</EventVariable>
+                </Options>
+            </Do>
+        </Action>
+        <Action>
+            <On>
+                <Module>amps-action-on-execute-event</Module>
+                <Options>
+                    <Event>ALERT_TIMEOUT</Event>
+                </Options>
+            </On>
+            <Do>
+                <Module>amps-action-do-extract-values</Module>
+                <Options>
+                    <MessageType>json</MessageType>
+                    <Data>{{AMPS_DATA}}</Data>
+                    <Value>ID_TO_USE=/ID</Value>
+                    <Value>CALLER_HOSTNAME=/FunctionCallerHostName</Value>
+                    <Value>CALLER=/FunctionInitiatorName</Value>
+                    <Value>FORMATTED_DATE_TIME = STRFTIME("%Y-%m-%dT%H:%M:%S.%03f", UNIX_TIMESTAMP()+
+                        TIMEZONEOFFSET())
+                    </Value>
+                </Options>
+            </Do>
+            <Do>
+                <Module>amps-action-do-publish-message</Module>
+                <Options>
+                    <MessageType>json</MessageType>
+                    <Topic>JETFUEL_EXECUTE_BUS</Topic>
+                    <Delta>True</Delta>
+                    <UpdateOnly>True</UpdateOnly>
+                    <Data>
+                        {"ID":"{{ID_TO_USE}}","FunctionCallerHostName":"{{CALLER_HOSTNAME}}","FunctionInitiatorName":"{{CALLER}}","MsgCreationName":"${AMPS_NAME}","MsgCreationTime":"{{FORMATTED_DATE_TIME}}","CurrentState":"Timeout","CurrentStateMsg":"Function publisher that published this function is not available now."}
+                    </Data>
+                </Options>
+            </Do>
+        </Action>
+        <Action>
+            <On>
+                <Module>amps-action-on-startup</Module>
+            </On>
+            <Do>
+                <Module>amps-action-do-delete-sow</Module>
+                <Options>
+                    <MessageType>json</MessageType>
+                    <Topic>JETFUEL_EXECUTE</Topic>
+                    <Filter>/AmpsInstanceOwner = '${AMPS_NAME}'</Filter>
+                </Options>
+            </Do>
+        </Action>
+        <Action>
+            <On>
+                <Module>amps-action-on-publish-message</Module>
+                <Options>
+                    <MessageType>json</MessageType>
+                    <MessageSource>local</MessageSource>
+                    <Topic>JETFUEL_EXECUTE_BUS</Topic>
+                </Options>
+            </On>
+            <Do>
+                <Module>amps-action-do-publish-message</Module>
+                <Options>
+                    <MessageType>json</MessageType>
+                    <Topic>JETFUEL_EXECUTE_STATS</Topic>
+                    <Data>{{AMPS_DATA}}</Data>
+                </Options>
+            </Do>
+        </Action>
+        <Action>
+            <On>
+                <Module>amps-action-on-publish-message</Module>
+                <Options>
+                    <Topic>/AMPS/ClientStatus</Topic>
+                    <MessageType>json</MessageType>
+                    <Filter>/ClientStatus/event in ('disconnect','logon')</Filter>
+                </Options>
+            </On>
+            <Do>
+                <Module>amps-action-do-extract-values</Module>
+                <Options>
+                    <MessageType>json</MessageType>
+                    <Data>{{AMPS_DATA}}</Data>
+                </Options>
+            </Do>
+            <Do>
+                <Module>amps-action-do-publish-message</Module>
+                <Options>
+                    <Topic>CLIENT_STATUS</Topic>
+                    <MessageType>json</MessageType>
+                    <Data>{{AMPS_DATA}}</Data>
+                </Options>
+            </Do>
+        </Action>
+    </Actions>
+    <Modules>
+        <Module>
+            <Library>libamps_udf_legacy_compatibility.so</Library>
+            <Name>compatibility-functions-module</Name>
+        </Module>
+    </Modules>
+
+</AMPSConfig>
+
