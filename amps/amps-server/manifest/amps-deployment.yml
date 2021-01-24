@@ -29,7 +29,7 @@ spec:
         - /bin/sh
         - -c
         args:
-        - echo hello
+        - /AMPS/bin/ampServer /etc/app/conf/amps-config.xml
         volumeMounts:
         - name: amps-vol
           mountPath: /ampsFiles
