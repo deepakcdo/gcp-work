@@ -29,7 +29,7 @@ spec:
         - /bin/sh
         - -c
         args:
-        - echo hello 
+        - echo hello
         volumeMounts:
         - name: amps-vol
           mountPath: /ampsFiles

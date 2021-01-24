@@ -7,8 +7,8 @@ MAINTAINER Deepak Dhayatker - Head Front Consulting <deepakcdo@gmail.com>
 ADD http://devnull.crankuptheamps.com/releases/amps/$VERSION/AMPS-$VERSION-Release-Linux.tar.gz /binaries/AMPS.tar
 RUN ls -l /
 RUN ls -l /binaries
-RUN rm -rf /binaries
 RUN tar xvf /binaries/AMPS.tar
+RUN rm -rf /binaries
 ENV OLD_DIR=AMPS-${VERSION}-Release-Linux
 RUN mv $OLD_DIR AMPS
 RUN ls -l /
