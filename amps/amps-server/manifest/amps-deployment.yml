@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: amps-servers
-        image: eu.gcr.io/deepak-cloud-work/amps-server:1.0.0.02
+        image: eu.gcr.io/deepak-cloud-work/amps-server:1.0.0.03
         env:
           - name: AMPS_NAME
             value: "LDN-PRIMARY"
