@@ -1,4 +1,4 @@
-FROM ubuntu
+FROM alpine
 
 ARG VERSION=5.3.1.31
 
@@ -7,12 +7,15 @@ MAINTAINER Deepak Dhayatker - Head Front Consulting <deepakcdo@gmail.com>
 ADD http://devnull.crankuptheamps.com/releases/amps/$VERSION/AMPS-$VERSION-Release-Linux.tar.gz /binaries/AMPS.tar
 RUN ls -l /
 RUN ls -l /binaries
+RUN rm -rf /binaries
 RUN tar xvf /binaries/AMPS.tar
 ENV OLD_DIR=AMPS-${VERSION}-Release-Linux
 RUN mv $OLD_DIR AMPS
 RUN ls -l /
-RUN apt-get update && apt-get install -y tree
-RUN tree
+
+RUN echo details
+RUN ls -al /AMPS/bin
+
 
 # expose All  tcp ports
 EXPOSE 8001
