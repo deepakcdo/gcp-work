@@ -8,12 +8,7 @@ ADD http://devnull.crankuptheamps.com/releases/amps/$VERSION/AMPS-$VERSION-Relea
 RUN ls -l /
 RUN ls -l /binaries
 RUN tar xvf /binaries/AMPS.tar --transform='s,AMPS[^/]*/,AMPS/,'
-RUN rm -rf /binaries
 RUN ls -l /
-
-RUN echo details
-RUN ls -al /AMPS/bin
-
 
 # expose All  tcp ports
 EXPOSE 8001
