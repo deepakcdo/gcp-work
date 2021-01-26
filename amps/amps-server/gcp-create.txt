@@ -1,28 +1,46 @@
 https://medium.com/faun/unique-configuration-per-pod-in-a-statefulset-1415e0c80258
 
-gcloud init
 
+usefull commands
+
+#delete cluster
 gcloud beta container --project "deepak-cloud-work" clusters delete "my-k8-new" --zone "europe-north1-a"
+# Validate nampespace
+kubectl config view --minify | grep namespace:
+# delete old configmap
+kubectl delete configmap my-set-config primary-config backup-config
+
+kubectl delete statefulset amps
+
+dos2unix configmap/*
+
+# setup
+cd /mnt/c/MySpace/Dev/Git/Cloud/gcp-work/amps/amps-server/manifest
+gcloud init
 gcloud beta container --project "deepak-cloud-work" clusters create "my-k8-new" --zone "europe-north1-a" --no-enable-basic-auth --cluster-version "1.17.14-gke.1600" --release-channel "stable" --machine-type "e2-medium" --image-type "COS" --disk-type "pd-standard" --disk-size "100" --metadata disable-legacy-endpoints=true --scopes "https://www.googleapis.com/auth/devstorage.read_only","https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring","https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly","https://www.googleapis.com/auth/trace.append" --preemptible --num-nodes "3" --enable-stackdriver-kubernetes --enable-ip-alias --network "projects/deepak-cloud-work/global/networks/default" --subnetwork "projects/deepak-cloud-work/regions/europe-north1/subnetworks/default" --default-max-pods-per-node "110" --no-enable-master-authorized-networks --addons HorizontalPodAutoscaling,HttpLoadBalancing --enable-autoupgrade --enable-autorepair --max-surge-upgrade 1 --max-unavailable-upgrade 0
 
 gcloud container clusters get-credentials my-k8-new --zone "europe-north1-a"
 kubectl get namespace
-
-cd /mnt/c/MySpace/Dev/Git/Cloud/gcp-work/amps/amps-server/manifest
-dos2unix configmap/*
 kubectl apply -f Namespace.yml
- 
- export PROJECT_ID="$(gcloud config get-value project -q)"
+export PROJECT_ID="$(gcloud config get-value project -q)"
 # set namespace
 kubectl config set-context --current --namespace=amps-namespace
-# Validate it
-kubectl config view --minify | grep namespace:
 
-kubectl delete configmap my-set-config primary-config backup-config
 // create run.sh
 kubectl create configmap my-set-config --from-file=configmap
 
 // create amps statefulset
 kubectl apply -f amps-deployment.yml
+kubectl apply -f amps-service.yml
  
- 
+
+
+ #### download docker image to my pc
+gcloud auth activate-service-account imagerepo@deepak-cloud-work.iam.gserviceaccount.com  --key-file=tempkey
+gcloud auth configure-docker
+docker pull eu.gcr.io/deepak-cloud-work/amps-server:1.0.0.03
+//run the container
+docker run --rm -it eu.gcr.io/deepak-cloud-work/amps-server:1.0.0.05 /AMPS/bin/ampServer configmap/a.xml
+
+//check the container
+docker run --rm -it eu.gcr.io/deepak-cloud-work/amps-server:1.0.0.05 /bin/sh
