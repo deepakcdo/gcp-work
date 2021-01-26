@@ -1,9 +1,9 @@
-FROM alpine
+FROM ubuntu
 
 ARG VERSION=5.3.1.31
 
 MAINTAINER Deepak Dhayatker - Head Front Consulting <deepakcdo@gmail.com>
-RUN apk --update add tar
+#RUN apk --update add tar
 ADD http://devnull.crankuptheamps.com/releases/amps/$VERSION/AMPS-$VERSION-Release-Linux.tar.gz /binaries/AMPS.tar
 RUN ls -l /
 RUN ls -l /binaries
