@@ -7,7 +7,7 @@ metadata:
     name: amps
 spec:
   serviceName: amps-servers
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       name: amps-servers

@@ -1,0 +1,11 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: basic-ingress
+  namespace: amps-namespace
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: "amps-primary"
+spec:
+  backend:
+    serviceName: primary-amps-service
+    servicePort: 8199
