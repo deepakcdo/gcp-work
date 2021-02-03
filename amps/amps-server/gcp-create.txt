@@ -56,3 +56,9 @@ docker run --rm -it eu.gcr.io/deepak-cloud-work/amps-server:1.0.0.05 /bin/sh
 
 gcloud compute addresses create amps-primary --project=deepak-cloud-work --network-tier=STANDARD --region=europe-north1
 gcloud compute addresses delete  amps-primary --project=deepak-cloud-work --quiet --region=europe-north1
+
+#get into a running pod
+kubectl exec --stdin --tty helloweb-79d6d95649-gsntq  -- /bin/sh
+
+#connect a busybox contaier to cluster
+kubectl run curl-dddd --image=radial/busyboxplus:curl -i --tty --rm
