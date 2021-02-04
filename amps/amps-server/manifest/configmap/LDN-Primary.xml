@@ -48,6 +48,10 @@
             <RotationThreshold>200MB</RotationThreshold>
             <Level>info</Level>
         </Target>
+        <Target>
+            <Protocol>stdout</Protocol>
+            <Level>info</Level>
+        </Target>
     </Logging>
 
     <SOW>

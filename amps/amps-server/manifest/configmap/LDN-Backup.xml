@@ -3,7 +3,7 @@
     <Name>${AMPS_NAME}</Name>
     <Group>LONDON</Group>
     <Admin>
-        <InetAddr>localhost:8198</InetAddr>
+        <InetAddr>localhost:8199</InetAddr>
         <FileName>ampsFiles/${AMPS_NAME}/stats.db</FileName>
         <SQLTransport>websocket-any</SQLTransport>
     </Admin>
@@ -14,7 +14,7 @@
         <Transport>
             <Name>tcp-json</Name>
             <Type>tcp</Type>
-            <InetAddr>9001</InetAddr>
+            <InetAddr>8001</InetAddr>
             <ReuseAddr>true</ReuseAddr>
             <MessageType>json</MessageType>
             <Protocol>amps</Protocol>
@@ -22,7 +22,7 @@
         <Transport>
             <Name>nvfix-tcp</Name>
             <Type>tcp</Type>
-            <InetAddr>9002</InetAddr>
+            <InetAddr>8002</InetAddr>
             <ReuseAddr>true</ReuseAddr>
             <MessageType>nvfix</MessageType>
             <Protocol>amps</Protocol>
@@ -30,14 +30,14 @@
         <Transport>
             <Name>amps-replication</Name>
             <Type>amps-replication</Type>
-            <InetAddr>19085</InetAddr>
+            <InetAddr>18085</InetAddr>
             <ReuseAddr>true</ReuseAddr>
         </Transport>
         <Transport>
             <Name>websocket-any</Name>
             <Protocol>websocket</Protocol>
             <Type>tcp</Type>
-            <InetAddr>9008</InetAddr>
+            <InetAddr>8008</InetAddr>
         </Transport>
     </Transports>
 
@@ -48,9 +48,13 @@
             <RotationThreshold>200MB</RotationThreshold>
             <Level>info</Level>
         </Target>
+        <Target>
+            <Protocol>stdout</Protocol>
+            <Level>info</Level>
+        </Target>
     </Logging>
 
-    <SOW>         
+    <SOW>
         <Topic>
             <FileName>ampsFiles/${AMPS_NAME}/sow/%n-json.sow</FileName>
             <Topic>TRADERS</Topic>
@@ -58,7 +62,7 @@
             <MessageType>json</MessageType>
             <Expiration>400d</Expiration>
         </Topic>
-        
+
         <Topic>
             <FileName>ampsFiles/${AMPS_NAME}/sow/%n-json.sow</FileName>
             <Topic>FAST_PRICE</Topic>

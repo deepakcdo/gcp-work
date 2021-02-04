@@ -62,3 +62,6 @@ kubectl exec --stdin --tty helloweb-79d6d95649-gsntq  -- /bin/sh
 
 #connect a busybox contaier to cluster
 kubectl run curl-dddd --image=radial/busyboxplus:curl -i --tty --rm
+
+check dns
+cat /etc/resolv.conf

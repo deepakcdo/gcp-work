@@ -13,21 +13,16 @@ RUN ls -l /
 # expose All  tcp ports
 EXPOSE 8001
 EXPOSE 8002
-EXPOSE 9001
-EXPOSE 9002
 
 # expose All websocket ports
 EXPOSE 8008
-EXPOSE 9008
 
 
 # expose All admin port
 EXPOSE 8199
-EXPOSE 8198
 
 # expose reports port expose both
 EXPOSE 18085
-EXPOSE 19085
 
 
 

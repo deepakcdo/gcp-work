@@ -19,17 +19,15 @@ spec:
       containers:
       - name: amps-servers
         image: eu.gcr.io/deepak-cloud-work/amps-server:1.0.0.07
-        env:
-          - name: AMPS_NAME
-            value: "LDN-PRIMARY"
-          - name: REP_SERVER
-            value: "backup-amps"
         imagePullPolicy: Always
         command:
         - /bin/sh
         - -c
-        args:
-        - /AMPS/bin/ampServer /etc/app/conf/amps-config.xml
+        - |
+          export AMPS_NAME=`cat /mnt/data/AMPS_NAME`
+          export REP_SERVER=`cat /mnt/data/REP_SERVER`
+          echo got $AMPS_NAME and $REP_SERVER
+          /AMPS/bin/ampServer /etc/app/conf/amps-config.xml
         volumeMounts:
         - name: amps-vol
           mountPath: /ampsFiles
