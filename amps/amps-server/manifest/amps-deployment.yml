@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: amps-servers
-        image: eu.gcr.io/deepak-cloud-work/amps-server:1.0.0.07
+        image: eu.gcr.io/deepak-cloud-work/amps-server:1.0.0.09
         imagePullPolicy: Always
         command:
         - /bin/sh
