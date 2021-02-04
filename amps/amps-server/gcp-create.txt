@@ -32,12 +32,19 @@ kubectl config set-context --current --namespace=amps-namespace
 
 // create run.sh
 kubectl delete configmap my-set-config
-kubectl create configmap my-set-config --from-file=configmap
+kubectl create configmap my-set-config --from-file=configmap --namespace=amps-namespace
 
 // create amps statefulset
+kubectl delete statefulset amps
 kubectl apply -f amps-deployment.yml
 kubectl apply -f amps-main-service.yml
 kubectl apply -f amps-headless-service.yml
+
+
+kubectl apply -f amps-primary-service.yml
+kubectl apply -f amps-primary-endpoint.yml
+kubectl apply -f amps-backup-service.yml
+kubectl apply -f amps-backup-endpoint.yml
 
 
 
