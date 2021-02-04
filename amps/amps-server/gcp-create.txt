@@ -31,11 +31,13 @@ export PROJECT_ID="$(gcloud config get-value project -q)"
 kubectl config set-context --current --namespace=amps-namespace
 
 // create run.sh
+kubectl delete configmap my-set-config
 kubectl create configmap my-set-config --from-file=configmap
 
 // create amps statefulset
 kubectl apply -f amps-deployment.yml
-kubectl apply -f amps-primary-service.yml
+kubectl apply -f amps-main-service.yml
+kubectl apply -f amps-headless-service.yml
 
 
 
