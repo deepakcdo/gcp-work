@@ -12,7 +12,7 @@ steps:
   entrypoint: /bin/bash
   args: ["-c", "docker push eu.gcr.io/$PROJECT_ID/amps-publisher:$(cat IMAGE_TAG)"]
 - name: gcr.io/cloud-builders/docker
-  args: ["push", "eu.gcr.io/$PROJECT_ID/amps-publisher:latest"
+  args: ["push", "eu.gcr.io/$PROJECT_ID/amps-publisher:latest"]
 - name: gcr.io/cloud-builders/docker
   entrypoint: /bin/bash
   args: ["-c", "docker build -f amps/amps-components/DockerfileSubscriber -t eu.gcr.io/$PROJECT_ID/amps-subscriber:$(cat IMAGE_TAG) -t eu.gcr.io/$PROJECT_ID/amps-subscriber:latest --cache-from eu.gcr.io/$PROJECT_ID/amps-subscriber:latest amps/amps-components/" ]
