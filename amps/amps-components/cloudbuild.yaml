@@ -7,7 +7,7 @@ steps:
   args: ["-p", "amps/amps-components", "assemble"]
 - name: gcr.io/cloud-builders/docker
   entrypoint: /bin/bash
-  args: ["-c", "docker build -f amps/amps-components/DockerFilePublisher -t eu.gcr.io/$PROJECT_ID/amps-publisher:$(cat IMAGE_TAG) -t eu.gcr.io/$PROJECT_ID/amps-publisher:latest --cache-from eu.gcr.io/$PROJECT_ID/amps-publisher:latest amps/amps-components/" ]
+  args: ["-c", "docker build -f amps/amps-components/DockerFilePublisher -t eu.gcr.io/$PROJECT_ID/amps-publisher:$(cat IMAGE_TAG) -t eu.gcr.io/$PROJECT_ID/amps-publisher:latest --cache-from eu.gcr.io/$PROJECT_ID/amps-publisher:latest --build-arg=JAR_FILE=build/libs/amps-components amps/amps-components/" ]
 - name: gcr.io/cloud-builders/docker
   entrypoint: /bin/bash
   args: ["-c", "docker push eu.gcr.io/$PROJECT_ID/amps-publisher:$(cat IMAGE_TAG)"]
@@ -15,7 +15,7 @@ steps:
   args: ["push", "eu.gcr.io/$PROJECT_ID/amps-publisher:latest"]
 - name: gcr.io/cloud-builders/docker
   entrypoint: /bin/bash
-  args: ["-c", "docker build -f amps/amps-components/DockerFileSubscriber -t eu.gcr.io/$PROJECT_ID/amps-subscriber:$(cat IMAGE_TAG) -t eu.gcr.io/$PROJECT_ID/amps-subscriber:latest --cache-from eu.gcr.io/$PROJECT_ID/amps-subscriber:latest amps/amps-components/" ]
+  args: ["-c", "docker build -f amps/amps-components/DockerFileSubscriber -t eu.gcr.io/$PROJECT_ID/amps-subscriber:$(cat IMAGE_TAG) -t eu.gcr.io/$PROJECT_ID/amps-subscriber:latest --cache-from eu.gcr.io/$PROJECT_ID/amps-subscriber:latest --build-arg=JAR_FILE=build/libs/amps-components amps/amps-components/" ]
 - name: gcr.io/cloud-builders/docker
   entrypoint: /bin/bash
   args: ["-c", "docker push eu.gcr.io/$PROJECT_ID/amps-subscriber:$(cat IMAGE_TAG)"]
