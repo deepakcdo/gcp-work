@@ -4,10 +4,7 @@ steps:
   args: ["-c", "echo ${_MAJOR}.${_MINOR}.${_PATCH}.$(cat amps/amps-server/version.txt) > IMAGE_TAG"]
 - name: gradle:5.6.2-jdk8
   entrypoint: gradle
-  args: ["test"]
-- name: gradle:5.6.2-jdk8
-  entrypoint: gradle
-  args: ["build"]
+  args: ["-p", "amps/amps-components", "assemble"]
 - name: gcr.io/cloud-builders/docker
   entrypoint: /bin/bash
   args: ["-c", "docker build -f amps/amps-components/DockerfilePublisher -t eu.gcr.io/$PROJECT_ID/amps-publisher:$(cat IMAGE_TAG) -t eu.gcr.io/$PROJECT_ID/amps-publisher:latest --cache-from eu.gcr.io/$PROJECT_ID/amps-publisher:latest amps/amps-components/" ]
