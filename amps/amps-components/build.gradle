@@ -1,0 +1,26 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'distribution'
+
+repositories {
+    jcenter()
+}
+sourceCompatibility = 8
+
+dependencies {
+    compile fileTree(dir: 'libs', include: '*.jar')
+}
+
+task runAmpsPublisher(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'AmpsPublisher'
+    jvmArgs '-Dlog4j.configurationFile=log4j2-JetFuel.xml', '-DconUrl=tcp://35.228.111.20:8001/amps/json', '-Dtopic=FAST_PRICE'
+    args 'notused','notused'
+}
+
+task runAmpsSubcriber(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'AmpsSubscriber'
+    jvmArgs '-Dlog4j.configurationFile=log4j2-JetFuel.xml', '-DconUrl=tcp://35.228.111.20:8001/amps/json', '-Dtopic=FAST_PRICE'
+    args 'notused','notused'
+}
