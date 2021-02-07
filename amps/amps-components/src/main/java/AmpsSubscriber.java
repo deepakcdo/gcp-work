@@ -26,8 +26,9 @@ public class AmpsSubscriber {
     }
 
     public static void main(String[] args) {
-        String conUrl = System.getProperty("conUrl");
-        String topic = System.getProperty("topic");
+        System.out.println("Staring AmpsSubscriber !!!!!!!");
+        String conUrl = System.getenv().get("conUrl");
+        String topic = System.getenv().get("topic");
 
         if (conUrl == null) {
             System.out.println("No environment variable set for conUrl");
@@ -37,6 +38,9 @@ public class AmpsSubscriber {
         }
         System.out.println("Got conUrl as " + conUrl + " and topic as " + topic);
 
+        if (conUrl == null || topic == null){
+            System.exit(9);
+        }
         new AmpsSubscriber(conUrl, topic);
     }
 }

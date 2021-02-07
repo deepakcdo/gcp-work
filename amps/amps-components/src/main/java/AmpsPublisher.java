@@ -50,6 +50,7 @@ public class AmpsPublisher {
     }
 
     public static void main(String[] args) {
+        System.out.println("Staring AmpsPublisher !!!!!!!");
         String conUrl = System.getenv().get("conUrl");
         String topic = System.getenv().get("topic");
 
@@ -61,6 +62,9 @@ public class AmpsPublisher {
         }
         System.out.println("Got conUrl as " + conUrl + " and topic as " + topic);
 
+        if (conUrl == null || topic == null){
+            System.exit(9);
+        }
         new AmpsPublisher(conUrl, topic);
     }
 }
