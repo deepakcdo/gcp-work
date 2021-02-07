@@ -6,7 +6,7 @@ spec:
   selector:
     matchLabels:
       app: amps-publisher
-  replicas: 1
+  replicas: 5
   template:
     metadata:
       labels:
@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: amps-publisher
-        image: eu.gcr.io/deepak-cloud-work/amps-publisher:1.0.0.14
+        image: eu.gcr.io/deepak-cloud-work/amps-publisher:1.0.0.15
         resources:
           requests:
             memory: 1000Mi

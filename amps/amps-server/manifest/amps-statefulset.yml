@@ -26,6 +26,7 @@ spec:
         - |
           export AMPS_NAME=`cat /etc/app/conf/AMPS_NAME`
           export REP_SERVER=`cat /etc/app/conf/REP_SERVER`
+          export AMPS_REP_NAME=`cat /etc/app/conf/AMPS_REP_NAME`
           echo got $AMPS_NAME and $REP_SERVER
           /AMPS/bin/ampServer /etc/app/conf/amps-config.xml
         volumeMounts:

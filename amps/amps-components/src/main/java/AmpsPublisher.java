@@ -1,5 +1,7 @@
 import headfront.amps.AmpsConnection;
 
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +35,7 @@ public class AmpsPublisher {
     private void publishHistoricTrade(String topic) {
         Map<String, Object> data = new HashMap<>();
         final int i = (int) (Math.random() * 10);
+        try {
         data.put("ID", "Trade_" + i);
         data.put("EXN_ID", "TRADER1_" + i);
         data.put("EXN_NAME", "TRADER1_" + i);
@@ -41,8 +44,9 @@ public class AmpsPublisher {
         data.put("Offer", 10.2 - random.nextInt(100));
         data.put("client", "Who knows");
         data.put("Date", new Date().toString());
+        data.put("Hostname", InetAddress.getLocalHost().getHostName());
+        data.put("User", System.getProperty("user.name"));
         data.put("State", "Done");
-        try {
             connection.publishDelta(topic, "ID", data);
         } catch (Exception e) {
             e.printStackTrace();
