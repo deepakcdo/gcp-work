@@ -21,4 +21,4 @@ steps:
   args: ["-c", "docker push eu.gcr.io/$PROJECT_ID/amps-subscriber:$(cat IMAGE_TAG)"]
 - name: gcr.io/cloud-builders/docker
   args: ["push", "eu.gcr.io/$PROJECT_ID/amps-subscriber:latest"]
-tags: ["my-ampsCompoents"]
+tags: ["my-ampsComponents"]
