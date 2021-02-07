@@ -81,3 +81,11 @@ kubectl run curl-dddd --image=radial/busyboxplus:curl -i --tty --rm
 
 check dns
 cat /etc/resolv.conf
+
+
+# run amps publisher on my local machine
+# need to authorise activate-service-account see above
+docker pull eu.gcr.io/deepak-cloud-work/amps-publisher:1.0.0.13
+docker run --rm -it --env conUrl=tcp://35.228.93.20:8001/amps/json --env topic=FAST_PRICE eu.gcr.io/deepak-cloud-work/amps-publisher:1.0.0.13
+
+docker run --rm -it eu.gcr.io/deepak-cloud-work/amps-publisher:1.0.0.13 /bin/sh

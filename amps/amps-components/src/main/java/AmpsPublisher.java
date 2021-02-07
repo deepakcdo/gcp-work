@@ -50,8 +50,8 @@ public class AmpsPublisher {
     }
 
     public static void main(String[] args) {
-        String conUrl = System.getProperty("conUrl");
-        String topic = System.getProperty("topic");
+        String conUrl = System.getenv().get("conUrl");
+        String topic = System.getenv().get("topic");
 
         if (conUrl == null) {
             System.out.println("No environment variable set for conUrl");
@@ -59,7 +59,7 @@ public class AmpsPublisher {
         if (topic == null) {
             System.out.println("No environment variable set for topic");
         }
-        System.out.println("Got connectionUrl as " + conUrl + " and topic as " + topic);
+        System.out.println("Got conUrl as " + conUrl + " and topic as " + topic);
 
         new AmpsPublisher(conUrl, topic);
     }

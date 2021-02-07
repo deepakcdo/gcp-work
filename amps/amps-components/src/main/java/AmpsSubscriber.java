@@ -35,7 +35,7 @@ public class AmpsSubscriber {
         if (topic == null) {
             System.out.println("No environment variable set for topic");
         }
-        System.out.println("Got connectionUrl as " + conUrl + " and topic as " + topic);
+        System.out.println("Got conUrl as " + conUrl + " and topic as " + topic);
 
         new AmpsSubscriber(conUrl, topic);
     }

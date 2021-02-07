@@ -11,6 +11,16 @@ dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
 }
 
+jar {
+    manifest {
+        attributes "Main-Class": "NOT_USED"
+    }
+
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
 task runAmpsPublisher(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'AmpsPublisher'

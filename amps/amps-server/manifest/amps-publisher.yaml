@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: amps-publisher
-        image: eu.gcr.io/deepak-cloud-work/amps-publisher:1.0.0.12
+        image: eu.gcr.io/deepak-cloud-work/amps-publisher:1.0.0.13
         resources:
           requests:
             memory: 1000Mi
