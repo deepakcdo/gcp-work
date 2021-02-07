@@ -3,8 +3,6 @@ kind: Service
 metadata:
   name: amps-primary
   namespace: amps-namespace
-  labels:
-    name: amps-primary-service
 spec:
   type: LoadBalancer
   ports:
@@ -14,3 +12,5 @@ spec:
     - name: http
       port: 8199
       targetPort: 8199
+  selector:
+    statefulset.kubernetes.io/pod-name: amps-0

@@ -50,9 +50,7 @@ kubectl apply -f amps-publisher.yaml
 kubectl apply -f amps-subscriber.yaml
 
 kubectl apply -f amps-primary-service.yml
-kubectl apply -f amps-primary-endpoint.yml
 kubectl apply -f amps-backup-service.yml
-kubectl apply -f amps-backup-endpoint.yml
 
 
 
