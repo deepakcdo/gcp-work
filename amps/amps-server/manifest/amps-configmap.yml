@@ -5,4 +5,4 @@ metadata:
   namespace: amps-namespace
 data:
   topic: FAST_PRICE
-  conUrl: tcp://35.228.93.20:8001/amps/json
+  conUrl: tcp://amps-servers-client:8001/amps/json
