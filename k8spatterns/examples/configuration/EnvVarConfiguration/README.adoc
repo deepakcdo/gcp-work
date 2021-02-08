@@ -1,0 +1,51 @@
+== Envvar Configuration
+
+This example assumes that you have a Kubernetes cluster to your avail.
+Please check link:../../INSTALL.adoc#minikube[INSTALL] for various installation options.
+
+First, lets create a ConfigMap and a Secert with one entry, respecively:
+
+[source, bash]
+----
+kubectl create configmap random-generator-config --from-literal=pattern=EnvVarConfiguration
+
+kubectl create secret generic random-generator-secret --from-literal=seed=11232156346
+----
+
+We use both resource for defining environment variable in a simple Pod declaration for our sample https://github.com/k8spatterns/random-generator[random-generator REST service]:
+
+[source, bash]
+----
+kubectl create -f https://k8spatterns.io/EnvVarConfiguration/pod.yml
+----
+
+If you look into this resource description, you see how our ConfigMap and Secret is used to set two environment variables `PATTERN` and `SEED` which are then also exposed via the random-generator rest service.
+
+In order to access this rest service let's expose the Pod via
+
+[source, bash]
+----
+kubectl create -f https://k8spatterns.io/EnvVarConfiguration/service.yml
+----
+
+For simplicity reasons, this service exposed the service port via a `nodePort`.
+Assuming, that your are using Minikube you can now access this service from your dekstop with:
+
+[source, bash]
+----
+port=$(kubectl get svc random-generator -o jsonpath={.spec.ports[0].nodePort})
+curl -s http://$(minikube ip):$port/info | jq .
+----
+
+If you are not using Minikube, just insert the external facing IP address of one of your cluster's node for the host address.
+
+* Do you se, how the environment variables are exposed ?
+* What happens when you change the data of the ConfigMap or Secret (e.g. with `kubectl edit cm random-generator-config`) ? Is this changed value reflected in the response of your curl request /
+* What would you have to do, to get this value returned in the HTTP response ?
+
+=== More Information
+
+* https://github.com/k8spatterns/examples/tree/master/configuration/EnvVarConfiguration[Envvar Configuration example]
+* https://12factor.net/config[The Twelve-Factor App Manifesto]
+* https://martinfowler.com/bliki/ImmutableServer.html[Immutable Server Pattern]
+* http://docs.spring.io/autorepo/docs/spring-boot/current/reference/html/boot-features-profiles.html[Spring Boot profiles for using sets of configuration values]

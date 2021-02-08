@@ -1,0 +1,61 @@
+== Ambassador
+
+For trying out this example you need to have access to a Kubernetes cluster, e.g. by choosing one of the options from link:../../INSTALL.adoc#minikube[INSTALL].
+
+In this example we are creating a simple ambassador, which abstracts away a logging backend.
+The main `random-generator` service will log each incoming request by sending the generated data to an URL which is specified via the environment variable `LOG_URL`.
+Here we use this `LOG_URL` to call out to an _Ambassador_ listening on localhost at port 9009.
+The _Ambassador_ is free to forward the log data to an arbitrary log service.
+
+For sake of simplicity we are just using as simple _Ambassador_ which just logs the data to standard output.
+This ambassador uses a sime Node.js HTTP server and used from within the container image `k8spatterns/random-generator-log-ambassador`.
+This image can be found in the link:image[image] directory (Dockerfile and Node.js code).
+It's also directly available from Docker Hub.
+
+Let's create a bare Pod with `k8spatterns/random-generator` as the main container and `k8spatterns/random-generator-log-ambassador` as the ambassador:
+
+[source, bash]
+----
+kubectl create -f https://k8spatterns.io/Ambassador/pod.yml
+----
+
+A nodePort service helps for external access to the random generator:
+
+[source, bash]
+----
+kubectl create -f https://k8spatterns.io/Ambassador/service.yml
+----
+
+Now let's access the service where we again assume that your cluster node's have an external IP address which can be directly contacted from your desktop
+
+[source, bash]
+----
+port=$(kubectl get svc random-generator -o jsonpath={.spec.ports[0].nodePort})
+# Use Minikube's IP or any external accessible node IP from your cluster
+ip=$(minikube ip)
+curl -s http://$ip:$port
+----
+
+We can now verify whether our _Ambassador_ has been contacted with the appropriate data.
+
+[source, bash]
+----
+kubectl logs -f random-generator -c ambassador
+----
+
+You can also run this command in the background and re-run the `curl` program to see how the sidecar container is called in turn for each request.
+
+This will result in an output like:
+
+----
+==========================================
+Starting up random-generator Ambassador
+Listening at http://localhost:9009
+==========================================
+Message received for processing:
+>>> ID: d822e648-0f41-4c4f-ae3a-1ced14d2b4a2 -- Duration: 35318 -- Random: 355610385
+Message received for processing:
+>>> ID: d822e648-0f41-4c4f-ae3a-1ced14d2b4a2 -- Duration: 10080 -- Random: 294941020
+Message received for processing:
+>>> ID: d822e648-0f41-4c4f-ae3a-1ced14d2b4a2 -- Duration: 21987 -- Random: 1345536975
+----

@@ -1,0 +1,124 @@
+== Stateful Service
+
+In this example we will examine how a _Stateful Service_ can implemented with the help of a StatefulSet resource.
+
+This example assumes a Kubernetes installation available.
+For the moment we are using Minikube as we need some support for PersistentVolumes.
+Check the link:../../INSTALL.adoc#minikube[INSTALL] documentation for how to install Minikube.
+
+To access the PersistentVolume used in this demo, let's mount a local directory into the Minikube VM that we later then use a PersistentVolume mounted into the Pod:
+
+[source, bash]
+----
+minikube start --mount --mount-string="$(pwd)/logs:/tmp/example"
+----
+
+Alternatively start the mount after your minikube is running
+[source, bash]
+----
+minikube mount $(pwd)/logs:/tmp/example
+----
+
+
+This makes this directory available within the Minikube VM at the path `/tmp/example`.
+
+NOTE: Some virtual machine drivers of Minikube doesn't support host mounts like this (like the `vmware` driver). You can verify this by entering the VM after startup with `minikube ssh` and check whether you see the local directories `1` and `2` in `ls /tmp/example/*`, too.
+
+Let's create now two PersistentVolumes for the replicas of our StatefulSet later:
+
+[source, bash]
+----
+kubectl create -f https://k8spatterns.io/StatefulService/pvs.yml
+----
+
+These persistent volumes are the local directories  `logs/1` and `logs/2`.
+
+As described for the _Stateful Service_ pattern we need a headless service for the StatefulSet.
+Let's create one with:
+
+[source, bash]
+----
+kubectl create -f https://k8spatterns.io/StatefulService/service.yml
+----
+
+Now its time to create the StatefulSet with
+
+[source, bash]
+----
+kubectl create -f https://k8spatterns.io/StatefulService/statefulset.yml
+----
+
+In order to access the service we are creating a regular Service exposed via `nodePort`:
+
+[source, bash]
+----
+kubectl create -f https://k8spatterns.io/StatefulService/service-nodeport.yml
+port=$(kubectl get svc random-generator-np -o jsonpath={.spec.ports[0].nodePort})
+----
+
+`port` now holds the dynamically assigned port number which we can use to access the random-generator:
+
+[source, bash]
+----
+curl -s http://$(minikube ip):$port | jq .
+----
+
+We can also look at the logs created
+
+[source, bash]
+----
+curl -s http://$(minikube ip):$port/logs
+----
+
+As you can see, the logs differ from call to call as it depends which endpoint you are hitting with this request.
+You can also check for those log files in the directory `./logs/1` and `.logs/2`
+
+Now that we set up we can play a bit with this StatefulSet:
+
+We can scale it down with
+
+[source, bash]
+----
+kubectl scale statefulset --replicas 1 rg
+----
+
+What happens to the PerstitenVolumeClaims created for the this StatefulSet (`kubectl get pvc`) ? Has it been deleted, too ? What happens when you query the service ?
+
+Now scale up to three replicas:
+
+[source, bash]
+----
+kubectl scale statefulset --replicas 3 rg
+----
+
+Check again the PVCs. It the Pod with index 1 attached back to its original PersistentVolume ? How is the new Pod nr. 3 attached to which PV ?
+
+Finally, let's check how the pods can be adressed within the internal network.
+
+For this, jump into one of the pods with
+
+[source, bash]
+----
+kubectl exec -it rg-0 bash
+----
+
+and then, from within the Pod check the DNS entry for the headless Service:
+
+[source, bash]
+----
+dig SRV random-generator.default.svc.cluster.local
+----
+
+You will find all the internal IP adresses of the StatefulSet's Pod in the answer.
+
+=== More information
+
+* https://github.com/k8spatterns/examples/tree/master/advanced/StatefulService[StatefulService example]
+* https://kubernetes.io/docs/tutorials/stateful-application/basic-stateful-set/[StatefulSet Basics]
+* https://kubernetes.io/docs/concepts/workloads/controllers/statefulset[StatefulSets]
+* https://kubernetes.io/docs/tutorials/stateful-application/cassandra/[Deploying Cassandra with Stateful Sets]
+* https://kubernetes.io/docs/tutorials/stateful-application/zookeeper/[Running ZooKeeper, A Distributed System Coordinator]
+* https://kubernetes.io/docs/concepts/services-networking/service/#headless-services[Headless Services]
+* https://kubernetes.io/docs/tasks/run-application/force-delete-stateful-set-pod/[Force Delete StatefulSet Pods]
+* https://medium.com/@marko.luksa/graceful-scaledown-of-stateful-apps-in-kubernetes-2205fc556ba9[Graceful scaledown of stateful apps in Kubernetes]
+* https://www.youtube.com/watch?v=EuJoAKTCCXg[Configuring and Deploying Stateful Applications]
