@@ -64,6 +64,7 @@ spec:
       name: data
     spec:
       accessModes: [ "ReadWriteOnce" ]
+      storageClassName: amps-pvc
       resources:
         requests:
           storage: 1Gi

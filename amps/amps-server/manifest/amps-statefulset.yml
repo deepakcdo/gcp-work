@@ -49,7 +49,13 @@ spec:
         configMap:
           name: my-set-config
           defaultMode: 0555
-      - name: amps-vol
-        emptyDir: { }
       - name: conf-vol
         emptyDir: { }
+  volumeClaimTemplates:
+  - metadata:
+      name: amps-vol
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 5Gi

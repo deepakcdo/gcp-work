@@ -1,0 +1,15 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: amps-pvc
+  namespace: default
+  labels:
+    app: amps-pvc
+    owner: deepak
+spec:
+  accessModes:
+    - ReadOnlyMany
+  resources:
+    requests:
+      storage: 200Gi
+  storageClassName: amps-storage
