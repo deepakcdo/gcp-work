@@ -104,3 +104,28 @@ docker pull eu.gcr.io/deepak-cloud-work/amps-publisher:1.0.0.13
 docker run --rm -it -e conUrl=tcp://35.228.93.20:8001/amps/json -e topic=FAST_PRICE eu.gcr.io/deepak-cloud-work/amps-publisher:1.0.0.14
 
 docker run --rm -it eu.gcr.io/deepak-cloud-work/amps-publisher:1.0.0.13 /bin/sh
+
+# extract a pod name to variable
+POD_NAME=`kubectl get pods -o jsonpath='{.items[0].metadata.name}'`
+echo $POD_NAME
+
+#get details of error
+kubectl describe pod $POD_NAME
+
+
+#Helm
+helm create app
+sudo yum install -y tree
+tree
+helm template app/
+#delete all first
+kubectl delete deploy,pods,svc --all
+helm template ./app
+helm template --name cloudacademy ./app | kubectl apply -f -
+kubectl get svc
+CLOUDACADEMY_APP_IP=`kubectl get service/cloudacademy-app -o jsonpath='{.spec.clusterIP}'`
+echo $CLOUDACADEMY_APP_IP
+curl -i http://$CLOUDACADEMY_APP_IP
+cp app/values.yaml app/values.dev.yaml
+helm template --name cloudacademy -f ./app/values.dev.yaml ./app | kubectl apply -f -
+curl -i http://$CLOUDACADEMY_APP_IP
