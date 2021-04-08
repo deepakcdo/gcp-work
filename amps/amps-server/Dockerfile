@@ -1,4 +1,4 @@
-FROM ubuntu
+FROM ubuntu:rolling
 
 ARG VERSION=5.3.1.31
 
