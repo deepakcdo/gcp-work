@@ -1,0 +1,128 @@
+Cron
+List cron entries												crontab -l  ( -e to edit)
+
+Shell
+What shell are you running 										ps -p $$
+get user and group details										id -a 
+Find biggest folder 											du -s * 2>/dev/null | sort -rn | cut -f2- | xargs -d "\n" du -sh 2>/dev/null | head
+Show only first few characters									ps -ef |grep teamcity | cut -c-100
+find open files by process 										sudo -u user /usr/sbin/lsof -p PID
+Os name 														uname –a
+Linux version 													cat /etc/redhat-release
+Find all link in a folder										cd /var/log ; find . -type l -ls | grep opt
+Find files changed after time									find . -newermt "2015-07-30 00:00:00" -ls
+switch to  user on  box 										su - user or sudo -u user bash
+Check limits on the box 										ulimit -a
+print a variable												echo "Running ..$RUN_COMMAND" >> $logfile
+recursive grep													grep -r --include "*.properties" 3113 .| less
+show recursivly links											find -name current -exec ls -al {} \;
+Kill command recursivley show 									ps -ef | grep java | awk '{ print $2 }' | xargs echo
+Kill command recursivley do 									ps -ef | grep java | awk '{ print $2 }' | xargs 
+find large linux files											find . -size +100000 -exec ls -l {} \;
+Process taking lots of threads 									ps -eLf | wc -l
+Extract word from log and sort									grep "User" /var`/market.log | awk -F " " '{ print $11 }' | sort -u
+only show few chars												ps -ef | grep Xms | cut -c1-200
+count line 														wc -l
+Check deleted files that are still used by processes 			lsof|grep /var/log|grep deleted
+extract 8ths word then get unique list and then sort it 		awk -F " " '{ print $8 }' /tmp/amps1  |sort |uniq
+Find how long a process has been running						ps -p <pid> -o etime 
+Running multi commands 											hostname; date;whoami; time ssh londonserver "hostname"; date
+Test ssl 														openssl s_client -connect testserver:7667
+show all ciphers on machine										openssl ciphers 'ALL:eNULL'
+Scp from linux to linux 										scp  user@server1:/opt/test.rpm /var/
+find file recursively by name 									find . -name "*model*" -print
+curl download a file											curl -L -o file.tgz http://www.cyberciti.biz/long.file.name.tgz
+
+Memory  
+capture memory stats											vmstat 1 > vmstat.log
+Multiple grep 													grep 'critical\|error\|warning' /var/log/server.log 
+Sort and get unique 											sort filename | uniq -c | sort -nr
+process apart from root 										ps -edf | grep -v root | grep -v java
+Check virtual memory 											cat /proc/meminfo ( see CommitLimit and Comitted_AS)
+
+Cpu
+CPU																cat /proc/cpuinfo
+Active Threads per process   									cd /proc/<pid>/task
+iostat															iostat -x 1 or iostat -xt 1 > iostat.log
+whats running on a box 											pidstat 1
+Cpu used by process												pidstat -t 1 > /tmp/ampsCPU
+-- To get cpu for a process for 5 min - 3 steps 
+1)	ran this for 5 min  										pidstat -t 1 > /tmp/allCPU
+2)	then ran this 												grep javaComp /tmp/allCPU >/tmp/javaCompCPU 
+3)	then this 													awk -F " " '{ print $8 }' /tmp/javaCompCPU  |sort |uniq
+
+Disk 
+Disk usage by mounted filesystem 								df -h
+disk usage for the current directory with subdirectory  		du -ch
+disk usage for the current directory summary			 		du -sh
+Disk useage per folder											du -ch  --max-depth=1
+To find big files												find /opt/log -maxdepth 1 -type f -daystart -mtime 1 | xargs du -h
+--To get disk speed 											dd if=/dev/zero of=/var/test.dd bs=1G count=10 oflag=direct
+																10+0 records in
+																10+0 records out
+																10737418240 bytes (11 GB) copied, 7.67594 s, 1.4 GB/s
+
+Network
+Find open tibco port			/usr/sbin/lsof -itcp:7600 | /bin/grep -v 'PID' | /bin/awk '{print $2}' | /usr/bin/uniq | (while read pid; do /bin/ps -f -p $pid; done; ) | /bin/grep -v 'STIME TTY'
+Telnet Alternative				echo < /dev/tcp/10.14.14.14/443
+Check port is being used 		/usr/sbin/lsof -itcp:13098
+Check newtork latency on port   watch -n 0.2 "netstat -ant | grep 10025"
+Buffer queue for a port 		netstat -ant | grep 10025
+bandwith used by a process		cat /proc/74115/net/dev
+useful commad line to look at network buffers 					watch -n 0.2 “netstat -ant | grep <port>”
+---for network monitoring (use your port). put this in a script and run
+while(true)
+do
+     date >> netstat.out
+     netstat -ant | grep 10025    >> netstat.out
+//The first two columns will tell us if you're bandwidth constrained and where the bottleneck is
+     sleep 1
+done
+------
+
+
+RPM yum
+To list all packages on the satellite  						yum list java-1.6.0-sun*
+Check wahts installed 										rpm -qa |grep base
+Check what files were isnalled by rpm 						rpm -ql server4.44.linux-1
+Check which rpm a file came from 							rpm -qf java
+where rpmbuild comes from 									which rpmbuild
+where rpmbuild comes from 									rpm -q --whatprovides `which rpmbuild`
+when rpm was installed 										rpm -qi rpm-build
+
+
+zip/tar
+--create gz file
+ tar -cvzf allFiles.tar.gz jars/ packages/ tools/ prop.txt
+--compress all log
+ tar -cvzf allLogs.tar.gz *.log
+ split -b 20MB  allLogs.tar.gz allLogs.tar.gz.
+-- split then compress 
+ split -b 100MB  DeepakPRIMARY.0000000005.journal DeepakPRIMARY.0000000005.journal.
+ tar -zcvf DeepakPRIMARY.0000000005.journal.aa.tgz DeepakPRIMARY.0000000005.journal.aa
+ tar -zcvf DeepakPRIMARY.0000000005.journal.ab.tgz DeepakPRIMARY.0000000005.journal.ab
+--unzip a log file
+ gunzip server.log.gz
+
+
+
+-- performance settings
+Disable wireless network  in /sbin/sysctl –a  “net.ipv4.tcp_frto” to 0 --The frt0 setting is for wireless and sometimes slows things
+ 
+add ?tcp_nodelay=true in connection url to remove extra latency ( Nagle algorithm)
+sudo tuned-adm profile latency-performance
+
+Disable swap "set vm.swappiness to 1"
+Check "sysctl vm.swappiness"
+------------------------------------------------
+
+Spring spell example - Calling java code from Spring config file  <property name="connectionName" value="#{'${publisherName}' + '_' + new Double((T(Math).random() * 30000)).intValue()}"/>
+      
+------------------------------------------------
+Windows
+kill process with parameters 		wmic process where "name='java.exe' and commandline like '%-Dapplication.name=rfq%'" delete
+kill process 						taskkill /f /im java*
+list process						tasklist /fi "imagename eq java.exe"
+open ports 							netstat -oan | findstr 9002
+delete files 						DEL /S /Q %USERPROFILE%\caches
+delete folder						rmdir /S /Q %USERPROFILE%\AppData\Local\client

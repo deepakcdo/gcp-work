@@ -129,3 +129,9 @@ curl -i http://$CLOUDACADEMY_APP_IP
 cp app/values.yaml app/values.dev.yaml
 helm template --name cloudacademy -f ./app/values.dev.yaml ./app | kubectl apply -f -
 curl -i http://$CLOUDACADEMY_APP_IP
+
+// run a loop
+
+for i in {1..100}; do curl -s $K8S_INGRESS_NODEPORT_URL; done | grep CloudAcademy.v > web.log
+
+count grep v2.0.0 web.log | wc -l
