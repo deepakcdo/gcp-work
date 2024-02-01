@@ -33,6 +33,36 @@ Scp from linux to linux 										scp  user@server1:/opt/test.rpm /var/
 find file recursively by name 									find . -name "*model*" -print
 curl download a file											curl -L -o file.tgz http://www.cyberciti.biz/long.file.name.tgz
 
+Process
+List files used by the process 								ls -l /proc/<pid>/fd
+Take a thread dump for PID 								kill -3 <pid>
+Java heap stats for the process								jstat -gc <pid>
+Java heap/jmap stats for the process 							jmap -heap <pid>
+
+Linus OOM
+Folder to check for OOM done by OS. 
+/var/log/messages
+/var/log/kern.log
+/var/log/dmesg
+/var/log/syslog
+or dmesg -T
+
+Performance
+enable core dumps 									ulimit -c unlimited
+
+Increaes socket sizes
+sudo sysctl -w net.core.wmem_max=2097152
+sudo sysctl -w net.core.wmem_default=2097152
+sudo sysctl -w net.core.rmem_max=2097152
+sudo sysctl -w net.core.rmem_default=2097152
+
+Enable higher limits
+Edit/Add  these to  /etc/security/limits.conf file.
+*      soft      nofile      2048
+*      hard      nofile      8192
+*      soft      nproc	     2048
+*      hard      nproc       8192
+
 Memory  
 capture memory stats											vmstat 1 > vmstat.log
 Multiple grep 													grep 'critical\|error\|warning' /var/log/server.log 
