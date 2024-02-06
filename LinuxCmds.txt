@@ -133,6 +133,8 @@ zip/tar
  tar -zcvf DeepakPRIMARY.0000000005.journal.ab.tgz DeepakPRIMARY.0000000005.journal.ab
 --unzip a log file
  gunzip server.log.gz
+--copy the file in to gzip not delete make its safe to do while a process is rusing the file 
+gzip -k filename.log
 
 
 
