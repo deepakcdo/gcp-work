@@ -37,9 +37,14 @@ Process
 List files used by the process 								ls -l /proc/<pid>/fd
 Take a thread dump for PID 								kill -3 <pid>
 Java heap stats for the process								jstat -gc <pid>
-Java heap/jmap stats for the process 							jmap -heap <pid>
+Java heap/jmap stats for the process 							jmap -heap <pid>  
+											jmap -dump:live,format=b,file=<file> <pid>
+											jcmd <pid> GC.heap_dump <file>
 
-Linus OOM
+
+
+
+Linux OOM
 Folder to check for OOM done by OS. 
 /var/log/messages
 /var/log/kern.log
