@@ -40,6 +40,8 @@ Java heap stats for the process								jstat -gc <pid>
 Java heap/jmap stats for the process 							jmap -heap <pid>  
 											jmap -dump:live,format=b,file=<file> <pid>
 											jcmd <pid> GC.heap_dump <file>
+											jcmd <pid> JFR.dump
+See list of recordings that are being done						jcmd <pid> JFR.check
 
 
 
