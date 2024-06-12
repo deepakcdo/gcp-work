@@ -106,6 +106,7 @@ Network
 Find open tibco port			/usr/sbin/lsof -itcp:7600 | /bin/grep -v 'PID' | /bin/awk '{print $2}' | /usr/bin/uniq | (while read pid; do /bin/ps -f -p $pid; done; ) | /bin/grep -v 'STIME TTY'
 Telnet Alternative				echo < /dev/tcp/10.14.14.14/443
 Check port is being used 		/usr/sbin/lsof -itcp:13098
+Check listen ports 			lsof -i -P -n | grep LISTEN
 Check newtork latency on port   watch -n 0.2 "netstat -ant | grep 10025"
 Buffer queue for a port 		netstat -ant | grep 10025
 bandwith used by a process		cat /proc/74115/net/dev
@@ -119,6 +120,17 @@ do
      sleep 1
 done
 ------
+
+-- check network tcp
+Start listening from a box			nc -l 5508
+Send a test message from another box		nc <listenerIP>10.10.10.2 5508
+check listen port on a server 			nc -zv <listenerIP>10.10.10.2 5508 
+--check network udp 
+Start listening from a box			nc -vlu 5508
+Send a test message from another box		nc -vu <listenerIP>10.10.10.2 5508
+--check network udp  using Iperf
+Send a server message from another box		iperf -s -u -p 5508
+Start listening from a box client		iperf -c <server_ip> -u -p 5508 -t 5
 
 
 RPM yum
