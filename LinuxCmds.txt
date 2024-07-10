@@ -40,12 +40,14 @@ Java heap stats for the process								jstat -gc <pid>
 Java heap/jmap stats for the process 							jmap -heap <pid>  
 											jmap -dump:live,format=b,file=<file> <pid>
 											jcmd <pid> GC.heap_dump <file>
+Prints  JVM system properties 								jcmd <pid> VM.system_properties > system_properties.txt
 
-Thread dump											jcmd <pid> JFR.dump
+Thread dump										jcmd <pid> JFR.dump
 See list of thread dump that are being done						jcmd <pid> JFR.check
+Print threads										jcmd <pid> Thread.print > thread_dump.txt
 
 Heap dump										jcmd <pid> GC.heap_dump filename=<path to file>.hprof
-
+Heap Summary										jcmd <pid> GC.heap_info > heap_info.txt
 
 
 
