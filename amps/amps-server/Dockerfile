@@ -1,4 +1,4 @@
-FROM ubuntu
+FROM ubuntu:groovy-20210416
 
 ARG VERSION=5.3.1.31
 
