@@ -1,4 +1,4 @@
-FROM ubuntu
+FROM ubuntu:20.10
 
 ARG VERSION=5.3.1.31
 
