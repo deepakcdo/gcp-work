@@ -182,3 +182,14 @@ list process						tasklist /fi "imagename eq java.exe"
 open ports 							netstat -oan | findstr 9002
 delete files 						DEL /S /Q %USERPROFILE%\caches
 delete folder						rmdir /S /Q %USERPROFILE%\AppData\Local\client
+
+
+
+------
+To stop network on linux 
+#sudo ip link set eth0 down
+#sudo ip link set eth0 up
+
+Tools 
+Trouble Tunnel —  https://github.com/60East/trouble-tunnel
+On modern Linux systems, you can use tc's "netem" tool — you can define latency distributions, loss rates, etc.  Your favorite LLM should be able to walk you through this easily
